@@ -5,47 +5,19 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'ping_ip_page.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-int _selectedIndex = 0;
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
+class CheckWifi extends StatefulWidget {
+  const CheckWifi({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mazeda Networks',
-      theme: ThemeData(
-        primaryColor: Colors.white, // Set the app bar background to white
-        fontFamily: 'Inter', // Use the Roboto font
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 58, 183, 77)),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Mazeda Networks (Demo)'),
-    );
-  }
+  _CheckWifiState createState() => _CheckWifiState();
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
+class _CheckWifiState extends State<CheckWifi> {
   String message = '';
   static const int PORT = 80;
   int numberOfPings = 0;
-  int defaultTotalPings = 10; // Default value for total pings
+  int defaultTotalPings = 40; // Default value for total pings
   Duration pingDelay = Duration(seconds: 1);
   List<String> pingMessages = [];
   bool isPinging = false;
@@ -121,8 +93,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _launchDefaultGatewayUrl() async {
-    final url =
-        'http://$wifiGateway'; // Assuming wifiGateway contains the IP address
+    final url = wifiGateway != null
+        ? 'http://$wifiGateway'
+        : 'Fallback URL when wifiGateway is null';
+    // Assuming wifiGateway contains the IP address
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -212,16 +186,17 @@ class _MyHomePageState extends State<MyHomePage> {
     if (dataLossPercentage == 0) {
       setState(() {
         message =
-            "Congratulations! You have no packet loss in your WiFi network. If you are still having poor internet performance at this moment, then please contact our support team. 4566586823";
+            "Congratulations! You have no packet loss in your WiFi network. If you are still having poor internet performance at this moment, then please contact our support team. +880 1927616110";
       });
     } else {
       setState(() {
         message =
-            "We have found packet loss on your Wi-Fi, if this is not resolved, then you are going to face poor internet performance.\n\n"
+            "We've detected packet loss on your personal Wi-Fi network. If we don't fix this issue, your internet performance could suffer.\n\n"
             "Few tips:\n"
-            "- Please get close to your Wi-Fi router\n"
+            "- Please get close to your Wi-Fi router.\n"
             "- Make sure the router is not overloaded with too many users.\n"
-            "- Get a better router.\n";
+            "- Get a better router.\n"
+            "- Contact our support team. +880 1927616110\n";
       });
     }
 
@@ -301,14 +276,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.title,
-          style: TextStyle(fontSize: 18),
-        ),
-        backgroundColor: Colors.grey[200],
-        titleSpacing: 20.0,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -341,7 +308,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       height:
                           8), // Add spacing between the existing widget and the description
                   Text(
-                    'This section will help you understand if your wifi has connectivity issue. (This section is totally independent from your ISP.)',
+                    'This section will help you understand if your wifi has connectivity issue. (This test is totally independent from your ISP.)',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
@@ -458,7 +425,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            '$numberOfPings',
+                            '$numberOfPings/$defaultTotalPings',
                             style: TextStyle(
                               fontSize: 16,
                               height: 1.0,
@@ -629,28 +596,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.wifi_find),
-            label: 'Check WiFi',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.multiple_stop),
-            label: 'Ping IP',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
       ),
     );
   }
