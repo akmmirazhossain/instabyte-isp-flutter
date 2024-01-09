@@ -35,3 +35,13 @@ To use the Wi-Fi Quality Analyzer:
 1. Clone the repository.
    ```bash
    git clone https://github.com/akmmirazhossain/instabyte-isp-flutter
+
+2. Navigate to the project directory.
+   ```bash
+   cd instabyte-isp-flutter
+
+3. Run the app on your Flutter environment.
+   ```bash
+   flutter run
+
+
